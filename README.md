@@ -3,7 +3,8 @@ Calculadora web para generar cotizaciones con costos editables, comisión de del
 
 # Cotizador Personal
 
-Proyecto web simple hecho con HTML, CSS y JavaScript.
+Proyecto web simple hecho con HTML, CSS y JavaScript. 
+PD: Una disculpa de antemano, todo lo he puesto en el mismo documento ya que estoy practicando y no me quiero confundir.
 
 ## Funciones
 - Calcular subtotal
