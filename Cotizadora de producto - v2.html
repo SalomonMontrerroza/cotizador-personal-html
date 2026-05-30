@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cotizador Personal</title>
+  
+  <!--CSS-->
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #f4f6f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .main-wrapper {
+      width: 100%;
+      max-width: 950px;
+      display: grid;
+      grid-template-columns: 430px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .container,
+    .history-container {
+      width: 100%;
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    h1,
+    h2 {
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 8px;
+      color: #222;
+    }
+
+    h2 {
+      font-size: 22px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      color: #333;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #222;
+    }
+
+    .result-box {
+      background: #f7f7f7;
+      border-radius: 14px;
+      padding: 16px;
+      margin-top: 8px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      color: #333;
+      font-size: 15px;
+      gap: 12px;
+    }
+
+    .total {
+      border-top: 1px solid #ddd;
+      padding-top: 14px;
+      margin-top: 12px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #111;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 18px;
+      padding: 13px;
+      border: none;
+      border-radius: 12px;
+      background: #222;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #000;
+    }
+
+    .clear-btn {
+      background: #b42318;
+      margin-top: 12px;
+    }
+
+    .clear-btn:hover {
+      background: #8f1c13;
+    }
+
+    .note {
+      margin-top: 14px;
+      font-size: 12px;
+      color: #777;
+      text-align: center;
+    }
+
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 650px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .history-card {
+      background: #f7f7f7;
+      border: 1px solid #e2e2e2;
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .history-title {
+      font-weight: bold;
+      color: #222;
+    }
+
+    .history-total {
+      font-size: 20px;
+      font-weight: bold;
+      color: #111;
+    }
+
+    .history-detail {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 6px;
+    }
+
+    .history-date {
+      font-size: 12px;
+      color: #777;
+      margin-top: 8px;
+    }
+
+    .empty-history {
+      text-align: center;
+      color: #777;
+      font-size: 14px;
+      background: #f7f7f7;
+      padding: 18px;
+      border-radius: 14px;
+    }
+
+    @media (max-width: 850px) {
+      body {
+        align-items: flex-start;
+      }
+
+      .main-wrapper {
+        grid-template-columns: 1fr;
+        max-width: 430px;
+      }
+    }
+  </style>
+</head>
+
+	<!--CONTENT-->
+
+<body>
+  <div class="main-wrapper">
+    <div class="container">
+      <h1>Cotizador Personal</h1>
+      <p class="subtitle">Calcula rápido el precio final para tus pedidos</p>
+
+      <label for="precio">Precio del producto ($)</label>
+      <input type="number" id="precio" value="0" min="0" step="0.01" oninput="calcular()" />
+
+      <label for="label">Costo de impresión del label ($)</label>
+      <input type="number" id="label" value="0.25" min="0" step="0.01" oninput="calcular()" />
+
+      <label for="pasaje">Costo de transporte ($)</label>
+      <input type="number" id="pasaje" value="0.70" min="0" step="0.01" oninput="calcular()" />
+
+      <label for="comision">Comisión delivery (%)</label>
+      <input type="number" id="comision" value="3" min="0" step="0.01" oninput="calcular()" />
+
+      <label for="ganancia">Ganancia deseada ($)</label>
+      <input type="number" id="ganancia" value="0" min="0" step="0.01" oninput="calcular()" />
+
+      <div class="result-box">
+        <div class="row">
+          <span>Subtotal</span>
+          <span id="subtotal">$0.00</span>
+        </div>
+        <div class="row">
+          <span>Comisión delivery</span>
+          <span id="delivery">$0.00</span>
+        </div>
+        <div class="row">
+          <span>Ganancia</span>
+          <span id="gananciaMostrar">$0.00</span>
+        </div>
+        <div class="row total">
+          <span>Total cotizado</span>
+          <span id="total">$0.00</span>
+        </div>
+      </div>
+
+      <button onclick="copiarCotizacion()">Copiar cotización</button>
+
+      <p class="note">MonterrozaSalomon 2026 - personal practice - cotizacion de pedidos de Online Product</p>
+    </div>
+
+    <div class="history-container">
+      <h2>Historial</h2>
+      <p class="subtitle">Cotizaciones copiadas recientemente</p>
+
+      <div id="historyList" class="history-list">
+        <div class="empty-history">Aún no hay cotizaciones copiadas.</div>
+      </div>
+
+      <button class="clear-btn" onclick="limpiarHistorial()">Limpiar historial</button>
+    </div>
+  </div>
+	<!---JAVA-->
+  <script>
+    let historial = [];
+
+    function obtenerValor(id) {
+      return parseFloat(document.getElementById(id).value) || 0;
+    }
+
+    function dinero(valor) {
+      return "$" + valor.toFixed(2);
+    }
+
+    function calcular() {
+      const precio = obtenerValor("precio");
+      const label = obtenerValor("label");
+      const pasaje = obtenerValor("pasaje");
+      const porcentajeComision = obtenerValor("comision");
+      const ganancia = obtenerValor("ganancia");
+
+      const subtotal = precio + label + pasaje;
+      const delivery = subtotal * (porcentajeComision / 100);
+      const total = subtotal + delivery + ganancia;
+
+      document.getElementById("subtotal").textContent = dinero(subtotal);
+      document.getElementById("delivery").textContent = dinero(delivery);
+      document.getElementById("gananciaMostrar").textContent = dinero(ganancia);
+      document.getElementById("total").textContent = dinero(total);
+
+      return {
+        precio,
+        label,
+        pasaje,
+        porcentajeComision,
+        ganancia,
+        subtotal,
+        delivery,
+        total
+      };
+    }
+
+    function copiarCotizacion() {
+      const datos = calcular();
+
+      const texto = `Cotización\n\nProducto: ${dinero(datos.precio)}
+	  \nLabel: ${dinero(datos.label)}
+	  \nPasaje: ${dinero(datos.pasaje)}
+	  \nComisión delivery (${datos.porcentajeComision}%): ${dinero(datos.delivery)}
+	  \nGanancia: ${dinero(datos.ganancia)}
+	  \n\nTotal cotizado: ${dinero(datos.total)}`;
+
+      navigator.clipboard.writeText(texto).then(() => {
+        agregarAlHistorial(datos);
+        alert("Cotización copiada y agregada al historial: " + dinero(datos.total));
+      }).catch(() => {
+        agregarAlHistorial(datos);
+        alert("No se pudo copiar automáticamente, pero se agregó al historial.");
+      });
+    }
+	
+	function guardarHistorial() {
+	localStorage.setItem("historialCotizaciones", JSON.stringify(historial));
+	}
+
+	function cargarHistorial() {
+	const historialGuardado = localStorage.getItem("historialCotizaciones");
+
+	if (historialGuardado) {
+		historial = JSON.parse(historialGuardado);
+		renderizarHistorial();
+		}
+	}
+	
+    function agregarAlHistorial(datos) {
+	const nuevaCotizacion = {
+		...datos,
+		fecha: new Date().toLocaleString("es-SV"),
+		numero: historial.length + 1
+	};
+
+		historial.unshift(nuevaCotizacion);
+		guardarHistorial();
+		renderizarHistorial();
+	}
+
+    function renderizarHistorial() {
+      const historyList = document.getElementById("historyList");
+
+      if (historial.length === 0) {
+        historyList.innerHTML = '<div class="empty-history">Aún no hay cotizaciones copiadas.</div>';
+        return;
+      }
+
+      historyList.innerHTML = historial.map((item) => `
+        <div class="history-card">
+          <div class="history-header">
+            <span class="history-title">Cotización #${item.numero}</span>
+            <span class="history-total">${dinero(item.total)}</span>
+          </div>
+		  
+          <div class="history-detail">
+            <span>Producto</span>
+            <span>${dinero(item.precio)}</span>
+          </div>
+		  
+          <div class="history-detail">
+            <span>Subtotal</span>
+            <span>${dinero(item.subtotal)}</span>
+          </div>
+		  
+          <div class="history-detail">
+            <span>Delivery</span>
+            <span>${dinero(item.delivery)}</span>
+          </div>
+		  
+          <div class="history-detail">
+            <span>Ganancia</span>
+            <span>${dinero(item.ganancia)}</span>
+          </div>
+		  
+          <div class="history-date">${item.fecha}</div>
+		  
+        </div>
+		
+      `).join("");
+    }
+
+    function limpiarHistorial() {
+		historial = [];
+		guardarHistorial();
+		renderizarHistorial();
+	}
+
+    calcular();
+	cargarHistorial();
+  </script>
+</body>
+</html>
